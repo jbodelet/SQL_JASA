@@ -1,0 +1,10 @@
+streamlit
+scipy
+numpy
+matplotlib
+pandas
+IPython  # obsolete, to remove
+Jupyter
+seaborn
+requests
+scikit-learn

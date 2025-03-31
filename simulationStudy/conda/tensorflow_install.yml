@@ -1,0 +1,15 @@
+# run: conda env create --file tensorflow_install.yml
+name: tensorflow
+dependencies:
+- scipy
+- numpy
+- matplotlib
+- pandas
+- Jupyter
+- seaborn
+- requests
+- scikit-learn
+- pip
+- pip: 
+  - tensorflow
+  - tensorflow_probability
