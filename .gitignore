@@ -1,4 +1,4 @@
-simulationStudy/simulations/
+simulationStudy/simulations/*
 !simulationStudy/simulations/.gitkeep
 data_analysis/TCGA-PANCAN-HiSeq-801x20531/
 data_analysis/gene_expression_data/
