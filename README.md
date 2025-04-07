@@ -52,8 +52,8 @@ Python libraries: streamlit tensorflow scipy numpy matplotlib pandas Jupyter sea
 
 For the additional simulation study (simulationStudy_Supplementary), you need to install the SQL package:
 ```
-devtools::install_github("jbodelet/SQL/sql")
-``
+devtools::install_github("jbodelet/SQL/sql@v1.0")
+```
 
 
 
