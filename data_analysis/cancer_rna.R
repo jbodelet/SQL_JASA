@@ -23,15 +23,15 @@ source(here("data_analysis", "src", "dataAnalysis.R"))
 
 # download data:
 dataset_url <- "https://archive.ics.uci.edu/static/public/401/gene+expression+cancer+rna+seq.zip"
-zip_file <- "gene_expression_cancer_rna_seq.zip"
+zip_file <- here( "data_analysis", "gene_expression_cancer_rna_seq.zip" )
 download.file(dataset_url, destfile = zip_file, mode = "wb")
-unzip(zip_file, exdir = "gene_expression_data")
-tar_gz_file <- list.files("gene_expression_data", pattern = "\\.tar\\.gz$", full.names = TRUE)
-untar(tar_gz_file[1], exdir = ".")  # Extract inside the working directory
+unzip(zip_file, exdir = here( "data_analysis", "gene_expression_data") )
+tar_gz_file <- list.files(here( "data_analysis", "gene_expression_data" ), pattern = "\\.tar\\.gz$", full.names = TRUE)
+untar(tar_gz_file[1], exdir = here( "data_analysis") )  # Extract inside the working directory
 
 
 # extract gene data:
-folder <- "TCGA-PANCAN-HiSeq-801x20531/"
+folder <- here( "data_analysis", "TCGA-PANCAN-HiSeq-801x20531/")
 raw <- read.csv2(file = paste0(folder, "data.csv" ), sep = ",")
 raw$gene_0 <- NULL
 gdata <- apply(raw[, -1], 2, as.numeric )
@@ -193,10 +193,10 @@ clusteredFunctions <- list(G = gene_functions, clusters = clusters$groups, grid 
 
 # Save the JSON string to a file:
 clusteredFunctionsJSON <- jsonlite::toJSON(clusteredFunctions)
-write(clusteredFunctionsJSON, file = "./clusteredFunctions_10.json" )
+write(clusteredFunctionsJSON, file = here("data_analysis","clusteredFunctions_10.json" ) )
 
 # save latent space:
-write.csv(data.frame(pheno, sql = fit$factor_z ), file = "cancerDataResults.csv")
+write.csv(data.frame(pheno, sql = fit$factor_z ), file = here("data_analysis","cancerDataResults.csv") )
 
 # Figure 1 in the Supplementary Material can be obtained by running figures_functional_clusters.py
 # conda activate tensorflow
