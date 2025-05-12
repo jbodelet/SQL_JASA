@@ -1,4 +1,4 @@
-fit_M1 <- function(mc, n, sim_folder = "./simulations/", lgrid = 50 ){
+fit_M1 <- function(mc, n, sim_folder = "./simulationStudy/simulations/", lgrid = 50 ){
   set.seed(42)
   grid <- qnorm(1:200/ 201)
   label_n <- paste0("_n", n, "_var1" )
@@ -27,11 +27,11 @@ fit_M1 <- function(mc, n, sim_folder = "./simulations/", lgrid = 50 ){
 
 
 
-get_mc_results_M1 <- function(mc, n ){
+get_mc_results_M1 <- function(mc, n, folder = "./simulationStudy/simulations/M1/" ){
   get_mse <- function(mc, n, method ){
     # get data:
     label_n <- paste0("_n", n, "_var1" )
-    filePath_2data <- paste0( "./simulations/M1/", "data", label_n, "/" )
+    filePath_2data <- paste0( folder, "data", label_n, "/" )
     g0 <- as.matrix( read.csv( paste0( filePath_2data, "g.csv") ) )
     z <- as.matrix( read.csv( paste0( filePath_2data, "z/M1", label_n, "_", mc, ".csv") ) )
     zhat <- as.matrix( read.csv( paste0(filePath_2data, method, "/z/", "M1",label_n, "_", mc,".csv") ) )

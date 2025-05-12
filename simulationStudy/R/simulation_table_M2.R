@@ -1,11 +1,11 @@
-# Make sure to set the working directory to simulationStudy folder
-source("R/src/montecarlo_M2.R")
 library(purrr)
 library(tidyr)
 library(dplyr)
 library(gtools)
+library(here)
+source( here( "simulationStudy", "R", "src", "montecarlo_M2.R") )
 
-folder = "./simulations/"
+sim_folder = here( "simulationSudy", "simulations/" )
 
 mcSize <- 100
 

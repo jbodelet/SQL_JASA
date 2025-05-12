@@ -1,4 +1,4 @@
-fit_M2 <- function(mc, p, q, K = 12, save = FALSE, a = -2, b = 4, lgrid = 50, sim_folder = "./simulations/" ){
+fit_M2 <- function(mc, p, q, K = 12, save = FALSE, a = -2, b = 4, lgrid = 50, sim_folder = "./simulationStudy/simulations/" ){
   set.seed(42)
   get_path <- path_M2_function(mc, p, q, sim_folder )
   data <- as.matrix( read.csv( get_path("x") ) )
@@ -50,7 +50,7 @@ write_output <- function(afm, get_path){
 #=====================
 
 
-get_mc_results_M2 <- function(mc, p, q, comp_vae = TRUE, sim_folder = "./simulations/" ){
+get_mc_results_M2 <- function(mc, p, q, comp_vae = TRUE, sim_folder = "./simulationStudy/simulations/" ){
   
   folder <- paste0(sim_folder, "M2_q", q, "/data_p", p, "/" )
   file <- paste0( "/M2_q", q, "_p", p, "_", mc,".csv" )

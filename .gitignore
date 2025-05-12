@@ -6,3 +6,4 @@ data_analysis/gene_expression_cancer_rna_seq.zip
 data_analysis/output/*
 !data_analysis/output/.gitkeep
 
+.Rproj.user

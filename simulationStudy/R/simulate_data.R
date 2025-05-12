@@ -1,9 +1,9 @@
-# Make sure to set the working directory to simulationStudy folder
-source("R/src/data_simulations.R")
-source("R/src/generate_data.R")
+library(here)
+source( here( "simulationStudy", "R", "src", "data_simulations.R") )
+source( here( "simulationStudy", "R", "src", "generate_data.R") )
 
 
-sim_path <- "./simulations/" # file to store simulated data
+sim_path <- here("simulationStudy", "simulations/" ) # file to store simulated data
 
 dir.exists(sim_path) # should be true
 

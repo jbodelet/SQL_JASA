@@ -11,8 +11,9 @@ library(cowplot)
 library(gridGraphics)
 library(cvTools)
 library(gtools)
-source("src/estimation.R")
-source("src/dataAnalysis.R")
+library(here)
+source(here("data_analysis", "src", "estimation.R"))
+source(here("data_analysis", "src", "dataAnalysis.R"))
 
 
 
@@ -51,7 +52,7 @@ if(1){
   lambda <- 0.49 # The obtained tuning parameter from our cross-validations
 }else{ # Running this cross-validation is time-consuming
   library(cvTools)
-  source("src/crossValidation.R")
+  source(here("data_analysis", "src", "crossValidation.R"))
   ncores <- 4 # number of cores to use
   lambdaGrid <- seq(0.001, 8, l = 16 )
   gcv <- get_GCV( gdata, q = 2, K = 12, Niter = 20, ncores = 35 )
@@ -103,7 +104,7 @@ final_plot <- plot_latent_space / legend_row + plot_layout(heights = c(10, 1))
 
 final_plot
 
-ggsave("latent_space.png", plot = final_plot, width = 8, height = 4, dpi = 300, units = "in")
+ggsave(here("data_analysis", "latent_space.png"), plot = final_plot, width = 8, height = 4, dpi = 300, units = "in")
 
 
 
@@ -111,14 +112,14 @@ ggsave("latent_space.png", plot = final_plot, width = 8, height = 4, dpi = 300, 
 # 4) Explained variance: 
 #========================
 
-dir.create("output") # create a directory to save the outputs
 qvec <- 1:20
 for( q in qvec ){ # This may be time-consuming
   temp <- AFM( gdata, q = q, K = 12, lambda = 1, method = "Greedy", Niter = 30, fastProd = TRUE )
-  saveRDS(temp, file = paste0("output/fit_q", q, ".RDS") )
+  filename <- paste0("fit_q", q, ".RDS")
+  saveRDS(temp, file = here( "data_analysis", "output", filename ) )
 }
 totalVar <- mean( (gdata - mean(gdata))^2 )
-mse <- sapply( 1:20, function(q) min( readRDS(paste0("output/fit_q", q, ".RDS") )$mse ) )
+mse <- sapply( 1:20, function(q) min( readRDS( here( "data_analysis", "output", paste0("fit_q", q, ".RDS") ) )$mse ) )
 ev <- 1 - mse / totalVar
 
 # PCA:
@@ -178,7 +179,7 @@ summary(accuracy_pca); sd(accuracy_pca)
 # 6) FUNCTIONAL CLUSTERING:
 #=============================
 
-source("src/functional_clustering.R")
+source(here("data_analysis", "src", "functional_clustering.R"))
 
 
 # Get important genes from the fit object obtained at step 2:

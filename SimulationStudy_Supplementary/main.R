@@ -1,4 +1,4 @@
-devtools::install_github("jbodelet/SQL/sql")
+devtools::install_github("jbodelet/SQL/sql@v1.0")
 library(sql)
 library(RGAN)
 library(torch)
@@ -10,10 +10,12 @@ library(reshape)
 library(ggplot2)
 library(Rfast)
 library(patchwork)
-source("src/architectures.R")
-source("src/gan_training.R")
-source("src/simulations.R")
-source("src/mcSim.R")
+library(here)
+source( here("SimulationStudy_Supplementary", "src", "architectures.R") )
+source( here("SimulationStudy_Supplementary", "src", "gan_training.R") )
+source( here("SimulationStudy_Supplementary", "src", "simulations.R") )
+source( here("SimulationStudy_Supplementary", "src", "mcSim.R") )
+
 
 
 mc_run <- function(n, p){
@@ -44,7 +46,8 @@ param_list <- list(n = c(200, 2000 ), p = c(5, 10, 20, 40, 80) )
 
 set.seed(42)
 out <- MonteCarlo(mc_run, nrep = 50, param_list = param_list, ncpus = 35 )
-saveRDS(out, "montecarlo_output.RDS")
+
+saveRDS(out, here("SimulationStudy_Supplementary", "montecarlo_output.RDS") )
 
 res <- out$results
 
@@ -86,7 +89,7 @@ plot_k <- ggplot(long_data_k, aes(x = p, y = value, fill = Method)) +
 
 final_plot <- plot_w|plot_k
 final_plot
-ggsave("boxplot_sql_gan_n200.png", plot = final_plot, width = 10, height = 4, dpi = 300, units = "in")
+ggsave(here("SimulationStudy_Supplementary", "boxplot_sql_gan_n200.png" ), plot = final_plot, width = 10, height = 4, dpi = 300, units = "in")
 
 
 
@@ -128,7 +131,7 @@ plot_k <- ggplot(long_data_k, aes(x = p, y = value, fill = Method)) +
 
 final_plot <- plot_w|plot_k
 final_plot
-ggsave("boxplot_sql_gan_n2000.png", plot = final_plot, width = 10, height = 4, dpi = 300, units = "in")
+ggsave( here("SimulationStudy_Supplementary", "boxplot_sql_gan_n2000.png"), plot = final_plot, width = 10, height = 4, dpi = 300, units = "in")
 
 
 

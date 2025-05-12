@@ -1,9 +1,10 @@
-# Make sure to set the working directory to simulationStudy folder
 library(tidyverse)
 library(gridExtra)
 library(RColorBrewer)
+library(here)
+setwd(here("simulationStudy", "R"))
 
-PATH_TO_SIM = paste0("./simulations/M1/data_n100_var1/")
+PATH_TO_SIM = here( "simulationStudy", "simulations", "M1", "data_n100_var1/")
 
 
 load_g_est <- function(path, g_true= NULL, estimator_name=NULL) {

@@ -70,6 +70,7 @@ We list below the packages and dependencies used for each folder.
 
 #### data_analysis
 ```
+here (1.0.1)
 dplyr (1.1.4) 
 tidyverse (2.0.0) 
 purrr (1.0.2)
@@ -90,6 +91,7 @@ Rfast (2.1.0)
 R packages:
 
 ```
+here (1.0.1)
 dplyr (1.1.4) 
 tidyverse (2.0.0) 
 purrr (1.0.2)
@@ -127,6 +129,7 @@ pip
 
 ```
 sql (1.0)
+here (1.0.1)
 future (1.40.0)
 ggplot2 (3.5.1) 
 Rfast (2.1.0) 
