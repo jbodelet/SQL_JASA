@@ -1,4 +1,10 @@
-devtools::install_github("jbodelet/SQL/sql@v1.0")
+# Supplementary Simulation Study: SQL vs. GAN Comparison
+# -----------------------------------------------------
+# This script performs Monte Carlo simulations to compare SQL and GAN
+# estimators on synthetic data, and produces boxplot summaries of
+# Wasserstein and Kolmogorov metrics for sample sizes n=200 and n=2000.
+
+devtools::install_github("jbodelet/SQL/sql@v1.0") # install version 1.0 to ensure reproducibility
 library(sql)
 library(RGAN)
 library(torch)
@@ -17,7 +23,7 @@ source( here("SimulationStudy_Supplementary", "src", "simulations.R") )
 source( here("SimulationStudy_Supplementary", "src", "mcSim.R") )
 
 
-
+# 1) Define Monte Carlo Run Function
 mc_run <- function(n, p){
   # Simulations:
   epochs <- 800
@@ -41,26 +47,26 @@ mc_run <- function(n, p){
   return(out)
 }
 
-# Parameters:
+# 2) Configure Monte Carlo Experiment
 param_list <- list(n = c(200, 2000 ), p = c(5, 10, 20, 40, 80) )
 
+
+# Run Monte Carlo: 50 replications, parallel across CPUs
 set.seed(42)
 out <- MonteCarlo(mc_run, nrep = 50, param_list = param_list, ncpus = 35 )
 
+# Save results if necessary:
 saveRDS(out, here("SimulationStudy_Supplementary", "montecarlo_output.RDS") )
 
+# Extract results array for plotting
 res <- out$results
-
-
 
 
 #=========================
 # Plot results: n = 200 
 #=========================
 
-
-n_index <- 1
-
+n_index <- 1  # n= 200
 long_data_w <- get_combined_data(res$gan_W[n_index,,], res$sql_W[n_index,,], param_list$p)
 long_data_k <- get_combined_data(res$gan_ks[n_index,,], res$sql_ks[n_index,,], param_list$p)
 
@@ -87,8 +93,11 @@ plot_k <- ggplot(long_data_k, aes(x = p, y = value, fill = Method)) +
     axis.title = element_text(size = 18)        # Adjust axis title size
   )
 
+# Combine plots:
 final_plot <- plot_w|plot_k
-final_plot
+print(final_plot)
+
+# Save plot if necessary:
 ggsave(here("SimulationStudy_Supplementary", "boxplot_sql_gan_n200.png" ), plot = final_plot, width = 10, height = 4, dpi = 300, units = "in")
 
 
@@ -101,7 +110,7 @@ ggsave(here("SimulationStudy_Supplementary", "boxplot_sql_gan_n200.png" ), plot 
 #=========================
 
 
-n_index <- 2
+n_index <- 2  # n= 2000
 
 long_data_w <- get_combined_data(res$gan_W[n_index,,], res$sql_W[n_index,,], param_list$p)
 long_data_k <- get_combined_data(res$gan_ks[n_index,,], res$sql_ks[n_index,,], param_list$p)
@@ -129,8 +138,12 @@ plot_k <- ggplot(long_data_k, aes(x = p, y = value, fill = Method)) +
     axis.title = element_text(size = 18)        # Adjust axis title size
   )
 
+
+# Combine plots:
 final_plot <- plot_w|plot_k
-final_plot
+print(final_plot)
+
+# Save plot if necessary:
 ggsave( here("SimulationStudy_Supplementary", "boxplot_sql_gan_n2000.png"), plot = final_plot, width = 10, height = 4, dpi = 300, units = "in")
 
 

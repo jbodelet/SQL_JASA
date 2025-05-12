@@ -1,11 +1,20 @@
-# Make sure your working directory is the data_analysis/
+# Data Analysis Script for Statistical Quantile Learning Paper
+# ---------------------------------------------------------
+# The script `cancer_rna.R` reproduces all the analyses and figures for the Cancer RNA-Seq data as described in Section 5 of the manuscript 
+# and Section E in the Supplementary Materials.
+# It handles data download, preprocessing, model estimation, plotting the latent space, computing explained variance,
+# classification accuracy, and functional clustering of genes.
+# 
+# Usage:
+# Open the project root as an RStudio project (ensures here() works automatically).
+# Install and load required packages (see Reproducibility section in README).
 library(dplyr)
 library(tidyverse)
 library(purrr)
 library(furrr)
 library(ggplot2)
 library(patchwork)
-library(irlba)  # PCA for large data
+library(irlba)
 library(e1071)
 library(cowplot)
 library(gridGraphics)
@@ -17,28 +26,33 @@ source(here("data_analysis", "src", "dataAnalysis.R"))
 
 
 
-#=================
-# 1) Load DATA:
-#=================
+#==================================
+# 1) Load  and Load RNA-Seq Data
+#==================================
 
-# download data:
+# download data the PanCanAtlas RNA-Seq dataset (801 samples x ~20k genes)
 dataset_url <- "https://archive.ics.uci.edu/static/public/401/gene+expression+cancer+rna+seq.zip"
 zip_file <- here( "data_analysis", "gene_expression_cancer_rna_seq.zip" )
 download.file(dataset_url, destfile = zip_file, mode = "wb")
 unzip(zip_file, exdir = here( "data_analysis", "gene_expression_data") )
+
+# Extract the tar.gz archive contained within the unzipped folder
 tar_gz_file <- list.files(here( "data_analysis", "gene_expression_data" ), pattern = "\\.tar\\.gz$", full.names = TRUE)
 untar(tar_gz_file[1], exdir = here( "data_analysis") )  # Extract inside the working directory
 
-
-# extract gene data:
+# Read gene expression CSV, remove index column, and convert to numeric matrix
 folder <- here( "data_analysis", "TCGA-PANCAN-HiSeq-801x20531/")
 raw <- read.csv2(file = paste0(folder, "data.csv" ), sep = ",")
 raw$gene_0 <- NULL
+
+# Convert expression values to numeric, center and scale each gene
 gdata <- apply(raw[, -1], 2, as.numeric )
 gdata <- scale( gdata )  # rescale data
+
+# Remove genes (columns) with any missing values
 gdata <- gdata[, complete.cases( t(gdata) ) ]  # remove genes with missing values
 
-# phenotype:
+# Load phenotype (tumor type) labels and convert to factor
 pheno <- read.csv2(file = paste0(folder, "labels.csv" ), sep = ",")
 pheno <- as.factor( pheno[, - 1] )
 
@@ -48,37 +62,42 @@ pheno <- as.factor( pheno[, - 1] )
 # 2) Estimate the Additive Latent Variable Model: 
 #================================================
 
-if(1){
-  lambda <- 0.49 # The obtained tuning parameter from our cross-validations
-}else{ # Running this cross-validation is time-consuming
+# The cross-validation takes about an hour on most machines (without parallelization)
+# To run the cross-validation, set notrun <- FALSE
+# Otherwise, to save time, we provide the tuning parameter (lambda) used in our data analysis
+notrun <- TRUE
+
+if(notrun){
+  # The obtained tuning parameter from our cross-validations:
+  lambda <- 0.49 
+}else{ 
+  # Run the cross-validations:
   library(cvTools)
   source(here("data_analysis", "src", "crossValidation.R"))
-  ncores <- 4 # number of cores to use
+  ncores <- 4 # Note: adjust ncores based on your machine
   lambdaGrid <- seq(0.001, 8, l = 16 )
   gcv <- get_GCV( gdata, q = 2, K = 12, Niter = 20, ncores = 35 )
   plot(gcv$errors ~ gcv$lambdaGrid )
-  lambda <- gcv$lambda_min2
+  lambda <- gcv$lambda_min2  # obtained tuning parameter
 }
 
-
+# Fit the SQL method with selected lambda (approx. 4 minutes runtime)
 set.seed(11)
 fit <- AFM( gdata, q = 2, K = 12, lambda = lambda, method = "Greedy", Niter = 20, fastProd = TRUE )
 
 
 
-#==================================
-# 3) PLOT OF THE LATENT SPACE
-#==================================
+#============================================
+# 3) Reproduce Figure 3 (Latent space)
+#============================================
 
+# Compute PCA with 2 principal component vectors:
+pca <- irlba::prcomp_irlba(gdata, n= 2)
 
-pca <- irlba::prcomp_irlba(gdata, n= 2) # PCA
-
+# Prepare data frame for plotting
 data2plot <- data.frame( pheno, sql = fit$factor_z, pca$x )
 
-
-# Plot results:
-custom_colors <- c( "#3498DB", "#E67E22", "#2ECC71", "#E74C3C", "#9B59B6" )
-
+# Generate composite scatter plots 
 sql_plot <- create_composite_plot(data2plot, "sql.1", "sql.2", "First latent", "Second latent")
 
 pca_plot <- create_composite_plot(data2plot, "PC1", "PC2", "First component", "Second component")
@@ -88,6 +107,7 @@ plot_latent_space <- (sql_plot | pca_plot) +
   theme(legend.position = "right")
 
 
+# Arrange plots side by side with shared legend
 legend_sql <- ggplot() +
   geom_text(aes(x = 0.5, y = 0.5, label = "(a) SQL"), size = 5) +
   theme_void() +
@@ -102,34 +122,45 @@ legend_row <- legend_sql + legend_pca + plot_layout(ncol = 2)
 
 final_plot <- plot_latent_space / legend_row + plot_layout(heights = c(10, 1))
 
-final_plot
+print( final_plot )
 
+# Save final latent space figure
 ggsave(here("data_analysis", "latent_space.png"), plot = final_plot, width = 8, height = 4, dpi = 300, units = "in")
 
 
 
-#========================
-# 4) Explained variance: 
-#========================
+#=========================================================
+# 4) Compute and Plot Explained Variance for SQL and PCA
+#=========================================================
 
 qvec <- 1:20
-for( q in qvec ){ # This may be time-consuming
+
+# For each number of factors, estimate SQL and save results
+# This may be time-consuming
+for( q in qvec ){
   temp <- AFM( gdata, q = q, K = 12, lambda = 1, method = "Greedy", Niter = 30, fastProd = TRUE )
   filename <- paste0("fit_q", q, ".RDS")
   saveRDS(temp, file = here( "data_analysis", "output", filename ) )
 }
-totalVar <- mean( (gdata - mean(gdata))^2 )
+
+# For each number of factors, load saved AFM fit and compute MSE
 mse <- sapply( 1:20, function(q) min( readRDS( here( "data_analysis", "output", paste0("fit_q", q, ".RDS") ) )$mse ) )
+
+# Compute explained variance for SQL
+totalVar <- mean( (gdata - mean(gdata))^2 )
 ev <- 1 - mse / totalVar
 
-# PCA:
+# Compute explained variance for PCA:
 pca <- prcomp(gdata)
 eigs <- pca$sd^2
 ev_pca <- cumsum(eigs[1:20])/ sum(eigs)
 
 
-# EXPLAINED VARIANCE PLOT
-#========================================================================================
+
+# Reproduce Figure 2 (explained Variance for SQL vs. PCA)
+#=========================================================
+
+
 data.frame(Factor = 1:20, sql = ev, pca = ev_pca )  %>% 
   ggplot() +
   geom_line(aes(x = Factor, y = sql, color = "SQL"), size = 1 ) +
@@ -142,32 +173,32 @@ data.frame(Factor = 1:20, sql = ev, pca = ev_pca )  %>%
   theme(panel.grid.major = element_line(linetype = "dotted")) +
   scale_color_manual(name = "Model", values = c("SQL" = "blue", "PCA" = "red")) +
   scale_y_continuous(limits = c(0, 0.9))
-#========================================================================================
 
 
 
 
 
-#=====================
-# 5) Classification:
-#=====================
 
-
+#================================================
+# 5) Classification Accuracy for SQL vs. PCA:
+#================================================
 
 
 # use fit obtained in step 2
 factor_z <- fit$factor_z
 
-pca <- irlba::prcomp_irlba(gdata, n= 2) # PCA
+# Get PCA scores:
+pca <- irlba::prcomp_irlba(gdata, n= 2)
 pcs <- pca$x
 
-# Training set:
+# Compare 2-dimensional representations via repeated random train/test splits
 index <- 1:nrow(gdata)
 N <- trunc(length(index)/5)
 set.seed(42)
 accuracy_sql <- replicate(100, get_accuracy(factor_z, pheno, sample(index, N) ) )
 accuracy_pca <- replicate(100, get_accuracy(pcs, pheno, sample(index, N) ) )
 
+# Summarize and print accuracy results
 summary(accuracy_sql); sd(accuracy_sql)
 summary(accuracy_pca); sd(accuracy_pca)
 
@@ -175,32 +206,35 @@ summary(accuracy_pca); sd(accuracy_pca)
 
 
 
-#=============================
-# 6) FUNCTIONAL CLUSTERING:
-#=============================
+#=====================================================================================================
+# 6) Perform Functional Clustering of Top Genes and Reproduce Figure 1 in the Supplementary Materials
+#=====================================================================================================
+# Reproducing Figure 1 in Supplementary Materials requires performing the four step below (three with R and one with Python)
+# It requires as input the clustered functions (clusteredFunctions_10.json) 
+# and the obtained latent space (cancerDataResults.csv)
 
 source(here("data_analysis", "src", "functional_clustering.R"))
 
-
-# Get important genes from the fit object obtained at step 2:
+# 1. Identify top 3000 genes by importance from SQL fit
 gene_functions <- get_most_important_genes(fit$g_eval[[1]], nb = 3000 )
 
-# functional clustering:
+# 2. Cluster gene functions into 10 groups
 set.seed(42)
 clusters <- get_groups( gene_functions, ng = 10 )
 grid <- qnorm(1:200 / 201 )
 clusteredFunctions <- list(G = gene_functions, clusters = clusters$groups, grid = grid)
 
-# Save the JSON string to a file:
+# 3. Save Results:
 clusteredFunctionsJSON <- jsonlite::toJSON(clusteredFunctions)
-write(clusteredFunctionsJSON, file = here("data_analysis","clusteredFunctions_10.json" ) )
+write(clusteredFunctionsJSON, file = here("data_analysis","clusteredFunctions_10.json" ) ) # clusters
+write.csv(data.frame(pheno, sql = fit$factor_z ), file = here("data_analysis","cancerDataResults.csv") ) # latent space
 
-# save latent space:
-write.csv(data.frame(pheno, sql = fit$factor_z ), file = here("data_analysis","cancerDataResults.csv") )
-
-# Figure 1 in the Supplementary Material can be obtained by running figures_functional_clusters.py
+# 4. Run Python file:
+# # Figure 1 in the Supplementary Material can be obtained by running figures_functional_clusters.py
+# # Once the files clusteredFunctions_10.json and cancerDataResults.csv are saved, 
+# # run the following commands in a terminal to produce Figure 1 in the Supplementary Materials
 # conda activate tensorflow
 # python figures_functional_clusters.py
-# the code will produce a pdf called "plot_functionalClusters_10.pdf"
+# # the code will produce a pdf called "plot_functionalClusters_10.pdf"
 
 

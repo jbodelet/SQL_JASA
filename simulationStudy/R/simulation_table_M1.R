@@ -1,3 +1,9 @@
+# Generate Table 1 (Model 1) in the manuscript
+# ---------------------------------------------------
+# This script aggregates Monte Carlo simulation results for Model 1,
+# computes median and standard deviation of MSE metrics, and
+# outputs a summary table (both printed and LaTeX via stargazer).
+
 library(purrr)
 library(tidyr)
 library(dplyr)
@@ -5,22 +11,22 @@ library(here)
 source( here( "simulationStudy", "R", "src", "montecarlo_M1.R") )
 
 
-folder = "./simulations/"
-
+# Define Simulation Parameters
 mcSize <- 100
-
 n_vec <- c( 50, 100, 500, 1000)
-
 fit_args <- expand_grid(mc = 1:mcSize, n = n_vec )
 
+# Load and Aggregate Simulation Results
 mse_data <- pmap_dfr(fit_args, possibly( get_mc_results_M1, otherwise = NULL ), folder = here("simulationStudy", "simulations", "M1/") )
 
+# Compute Summary Statistics
 mse_table <- mse_data %>% group_by(n) %>% 
   summarise(across( c(sql_z, sql_g, vae_z, vae_g), med_and_sd ) ) %>% ungroup()
 
+# Print the summary table
 print( mse_table )
 
-# latex output:
+#  Export LaTeX Table via stargazer
 stargazer::stargazer(mse_table, summary = FALSE, rownames = FALSE)
 
 

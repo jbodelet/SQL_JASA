@@ -56,7 +56,7 @@ cross_validate_K <- function(data, Kgrid = 4:10, ncores = 2, nfold = 5, q = 1,
 
 
 create_composite_plot <- function(data, x_var, y_var, top_title, y_lab) {
-  
+  custom_colors <- c( "#3498DB", "#E67E22", "#2ECC71", "#E74C3C", "#9B59B6" )
   # 1. Top label plot: displays the top title
   top_plot <- ggplot() +
     theme_void() +

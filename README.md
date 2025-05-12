@@ -33,8 +33,12 @@ The repository is organized as follows:
 
 ### data_analysis
 
-The file cancer_rna.R contains the code to download the data and reproduce all the results for the data analysis in Section 5.
-The data is automatically downloaded and unzipped from [https://archive.ics.uci.edu](https://archive.ics.uci.edu).
+The script `cancer_rna.R` reproduces all the analyses and figures for the Cancer RNA-Seq data as described in Section 5 of the manuscript 
+and Section E in the Supplementary Materials.
+It handles data download, preprocessing, model estimation, plotting the latent space, computing explained variance,
+classification accuracy, and functional clustering of genes.
+For this data set, running time for the SQL method was about 4 minutes.
+The cross-validation takes about an hour on most machines (without parallelization).
 
 
 ### simulationStudy
@@ -43,23 +47,34 @@ Running this script on a desktop or laptop is very time-consuming, even with par
 Please ensure that you keep the folder structure exactly as provided in the repository—including all folder names—since the code relies on these specific names to locate and save data. 
 Changing or removing any folder may cause errors.
 
+
 Simulations are performed with the following steps.
 
 1. Navigate to the R folder and run the file `simulate_data.R`. This will generate the data for the simulations and save it in the `simulations` folder.
+Specifically, it creates folders M1, M2_q1, M3_q3 for Model M1, Model M2 with one latent variable, and Model M3 for 3 latent variables respectively.
+The simulated data and true parameters (the latent variables and the generators) are saved for each scenario (sample size, for M1, and feature size, for M2).
 
-2. Still in the R folder, run the files `fit_M1.R`, `fit_M2.R`. This will fit the different methods on the simulated data and save the results in the `simulations` folder.
+2. Still in the R folder, run the files `fit_M1.R`, `fit_M2.R`. 
+This will fit SQL to all the simulated data and save the results in subfolders (called AFM_fit) contained in `simulations`.
 
 3. Navigate to the python folder and train the VAE. The specific steps are detailed in `python/README.md`.
+This will fit VAE to all the simulated data and save the results in subfolders (called vae_fit) contained in `simulations`.
 
-4. Return to the R folder. Run the file `simulation_table_M1.R` to compute Table 1 and `simulation_table_M2.R` to compute Table 2.
+4. Return to the R folder. Run the file `simulation_table_M1.R`.
+This will extract the simulated data, the SQL fits, and VAE fits contained in `simulations` and compute Table 1 in the manuscript. 
 
-5. Create Figure 1 using the file `Figure1.R`.
+5. Run the file `simulation_table_M2.R`.
+This will extract the simulated data, the SQL fits, and VAE fits contained in `simulations` and compute Table 2 in the manuscript. 
+
+6. Create Figure 1 using the script called `Figure1.R`.
 
 
 
 ### simulationStudy_Supplementary
 
-The main.R file contains the code to conduct the additional simulations presented in Section F of the Supplementary Materials.
+The `main.R` file contains the code to conduct the additional simulations presented in Section F of the Supplementary Materials.
+
+
 
 ## Reproducibility
 
