@@ -377,8 +377,9 @@ cancer (n = 78) * Lung cancer (n = 141) * Prostate cancer (n = 136)</p>
 </div>
 <div id="accessing-data" class="section level3">
 <h3>Accessing Data</h3>
-<p>The dataset can be manually downloaded from <a href="https://archive.ics.uci.edu">https://archive.ics.uci.edu</a>. For
-full reproducibility, you can instead run the <code>cancer_rna.R</code>
+<p>The dataset can be manually downloaded. Go to <a href="https://archive.ics.uci.edu/dataset/401/gene+expression+cancer+rna+seq">https://archive.ics.uci.edu/dataset/401/gene+expression+cancer+rna+seq</a>
+and click on Download.</p>
+<p>For convenience, you can instead run the <code>cancer_rna.R</code>
 script (in the data_analysis folder), which automatically downloads and
 unzips the dataset.</p>
 </div>
@@ -388,9 +389,14 @@ unzips the dataset.</p>
 <p>The repository is organized as follows:</p>
 <div id="data_analysis" class="section level3">
 <h3>data_analysis</h3>
-<p>The file cancer_rna.R contains the code to download the data and
-reproduce all the results for the data analysis in Section 5. The data
-is automatically downloaded and unzipped from <a href="https://archive.ics.uci.edu">https://archive.ics.uci.edu</a>.</p>
+<p>The script <code>cancer_rna.R</code> reproduces all the analyses and
+figures for the Cancer RNA-Seq data as described in Section 5 of the
+manuscript and Section E in the Supplementary Materials. It handles data
+download, preprocessing, model estimation, plotting the latent space,
+computing explained variance, classification accuracy, and functional
+clustering of genes. For this data set, running time for the SQL method
+was about 4 minutes. The cross-validation takes about an hour on most
+machines (without parallelization).</p>
 </div>
 <div id="simulationstudy" class="section level3">
 <h3>simulationStudy</h3>
@@ -405,23 +411,36 @@ may cause errors.</p>
 <ol style="list-style-type: decimal">
 <li><p>Navigate to the R folder and run the file
 <code>simulate_data.R</code>. This will generate the data for the
-simulations and save it in the <code>simulations</code> folder.</p></li>
+simulations and save it in the <code>simulations</code> folder.
+Specifically, it creates folders M1, M2_q1, M3_q3 for Model M1, Model M2
+with one latent variable, and Model M3 for 3 latent variables
+respectively. The simulated data and true parameters (the latent
+variables and the generators) are saved for each scenario (sample size,
+for M1, and feature size, for M2).</p></li>
 <li><p>Still in the R folder, run the files <code>fit_M1.R</code>,
-<code>fit_M2.R</code>. This will fit the different methods on the
-simulated data and save the results in the <code>simulations</code>
-folder.</p></li>
+<code>fit_M2.R</code>. This will fit SQL to all the simulated data and
+save the results in subfolders (called AFM_fit) contained in
+<code>simulations</code>.</p></li>
 <li><p>Navigate to the python folder and train the VAE. The specific
-steps are detailed in <code>python/README.md</code>.</p></li>
+steps are detailed in <code>python/README.md</code>. This will fit VAE
+to all the simulated data and save the results in subfolders (called
+vae_fit) contained in <code>simulations</code>.</p></li>
 <li><p>Return to the R folder. Run the file
-<code>simulation_table_M1.R</code> to compute Table 1 and
-<code>simulation_table_M2.R</code> to compute Table 2.</p></li>
-<li><p>Create Figure 1 using the file <code>Figure1.R</code>.</p></li>
+<code>simulation_table_M1.R</code>. This will extract the simulated
+data, the SQL fits, and VAE fits contained in <code>simulations</code>
+and compute Table 1 in the manuscript.</p></li>
+<li><p>Run the file <code>simulation_table_M2.R</code>. This will
+extract the simulated data, the SQL fits, and VAE fits contained in
+<code>simulations</code> and compute Table 2 in the manuscript.</p></li>
+<li><p>Create Figure 1 using the script called
+<code>Figure1.R</code>.</p></li>
 </ol>
 </div>
 <div id="simulationstudy_supplementary" class="section level3">
 <h3>simulationStudy_Supplementary</h3>
-<p>The main.R file contains the code to conduct the additional
-simulations presented in Section F of the Supplementary Materials.</p>
+<p>The <code>main.R</code> file contains the code to conduct the
+additional simulations presented in Section F of the Supplementary
+Materials.</p>
 </div>
 </div>
 <div id="reproducibility" class="section level2">
@@ -433,7 +452,8 @@ version 3.10 or superior. We list below the packages and dependencies
 used for each folder.</p>
 <div id="data_analysis-1" class="section level4">
 <h4>data_analysis</h4>
-<pre><code>dplyr (1.1.4) 
+<pre><code>here (1.0.1)
+dplyr (1.1.4) 
 tidyverse (2.0.0) 
 purrr (1.0.2)
 furrr (0.3.1) 
@@ -450,7 +470,8 @@ Rfast (2.1.0) </code></pre>
 <div id="simulationstudy-1" class="section level4">
 <h4>SimulationStudy</h4>
 <p>R packages:</p>
-<pre><code>dplyr (1.1.4) 
+<pre><code>here (1.0.1)
+dplyr (1.1.4) 
 tidyverse (2.0.0) 
 purrr (1.0.2)
 furrr (0.3.1) 
@@ -480,6 +501,7 @@ pip</code></pre>
 <div id="simulationstudy_supplementary-1" class="section level4">
 <h4>SimulationStudy_Supplementary</h4>
 <pre><code>sql (1.0)
+here (1.0.1)
 future (1.40.0)
 ggplot2 (3.5.1) 
 Rfast (2.1.0) 

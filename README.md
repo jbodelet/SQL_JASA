@@ -22,8 +22,10 @@ The dataset comprises five tumor types:
 
 ### Accessing Data
 
-The dataset can be manually downloaded from [https://archive.ics.uci.edu](https://archive.ics.uci.edu).
-For full reproducibility, you can instead run the `cancer_rna.R` script (in the data_analysis folder), which automatically downloads and unzips the dataset.
+The dataset can be manually downloaded. Go to 
+[https://archive.ics.uci.edu/dataset/401/gene+expression+cancer+rna+seq](https://archive.ics.uci.edu/dataset/401/gene+expression+cancer+rna+seq) and click on Download.
+
+For convenience, you can instead run the `cancer_rna.R` script (in the data_analysis folder), which automatically downloads and unzips the dataset.
 
 
 
