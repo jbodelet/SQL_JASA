@@ -1,9 +1,16 @@
 # Make sure your working directory is the data_analysis/
 library(dplyr)
 library(tidyverse)
-library(ggplot2)
 library(purrr)
 library(furrr)
+library(ggplot2)
+library(patchwork)
+library(irlba)  # PCA for large data
+library(e1071)
+library(cowplot)
+library(gridGraphics)
+library(cvTools)
+library(gtools)
 source("src/estimation.R")
 source("src/dataAnalysis.R")
 
@@ -62,9 +69,6 @@ fit <- AFM( gdata, q = 2, K = 12, lambda = lambda, method = "Greedy", Niter = 20
 # 3) PLOT OF THE LATENT SPACE
 #==================================
 
-library(ggplot2)
-library(patchwork)
-library(irlba)  # PCA for large data
 
 pca <- irlba::prcomp_irlba(gdata, n= 2) # PCA
 
@@ -147,7 +151,7 @@ data.frame(Factor = 1:20, sql = ev, pca = ev_pca )  %>%
 # 5) Classification:
 #=====================
 
-library(e1071)
+
 
 
 # use fit obtained in step 2
@@ -175,8 +179,7 @@ summary(accuracy_pca); sd(accuracy_pca)
 #=============================
 
 source("src/functional_clustering.R")
-library(cowplot)
-library(gridGraphics)
+
 
 # Get important genes from the fit object obtained at step 2:
 gene_functions <- get_most_important_genes(fit$g_eval[[1]], nb = 3000 )

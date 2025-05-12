@@ -360,75 +360,139 @@ results and real data analysis from the paper “Statistical Quantile
 Learning for Large Additive Latent Variable Models”. Our main goal in
 maintaining this repository is to provide a transparent account of the
 methods used to generate our empirical results. The software in its
-current form is not intended for practical analytical use. In contrast,
-we recommend to use the most recent version of SQL which is available
-and maintained as a package at 👉<a href="https://github.com/jbodelet/SQL">https://github.com/jbodelet/SQL</a>.</p>
-<div id="organisation" class="section level2">
-<h2>Organisation</h2>
-<p>The repository is organised as follows:</p>
+current form is not intended for practical analytical use. Instead, we
+recommend using the latest recent version of SQL, which is maintained as
+a package at <a href="https://github.com/jbodelet/SQL">https://github.com/jbodelet/SQL</a>.</p>
+<div id="data-access" class="section level2">
+<h2>Data Access</h2>
+<div id="description-of-data" class="section level3">
+<h3>Description of Data</h3>
+<p>We use an RNA-Seq (HiSeq) dataset derived from the Pan-Cancer Atlas
+(PanCanAtlas) Initiative. This dataset contains RNA sequencing
+measurements used to study gene expression across multiple cancer types.
+It includes expression levels for 20,263 genes (with non-null
+expression) from a total of 801 patients. The dataset comprises five
+tumor types: * Breast cancer (n = 300) * Kidney cancer (n = 146) * Colon
+cancer (n = 78) * Lung cancer (n = 141) * Prostate cancer (n = 136)</p>
+</div>
+<div id="accessing-data" class="section level3">
+<h3>Accessing Data</h3>
+<p>The dataset can be manually downloaded from <a href="https://archive.ics.uci.edu">https://archive.ics.uci.edu</a>. For
+full reproducibility, you can instead run the <code>cancer_rna.R</code>
+script (in the data_analysis folder), which automatically downloads and
+unzips the dataset.</p>
+</div>
+</div>
+<div id="organization" class="section level2">
+<h2>Organization</h2>
+<p>The repository is organized as follows:</p>
 <div id="data_analysis" class="section level3">
 <h3>data_analysis</h3>
-<p>The file cancer_rna.R contains the code to reproduce all the results
-for the data analysis in Section 5. The data is automatically downloaded
-and unzipped from <a href="https://archive.ics.uci.edu">https://archive.ics.uci.edu</a>. You
-will need the following R packages:</p>
-<pre><code>dplyr
-tidyverse
-ggplot2
-Matrix
-irlba
-cvTools
-e1071
-cowplot
-gridGraphics</code></pre>
+<p>The file cancer_rna.R contains the code to download the data and
+reproduce all the results for the data analysis in Section 5. The data
+is automatically downloaded and unzipped from <a href="https://archive.ics.uci.edu">https://archive.ics.uci.edu</a>.</p>
 </div>
 <div id="simulationstudy" class="section level3">
 <h3>simulationStudy</h3>
 <p>This folder contains the code to reproduce the simulation study in
 Section 4 of the manuscript. Running this script on a desktop or laptop
-is very time-consuming, even with parallel processing. To run the
-simulations it is important to keep the folder structure.</p>
+is very time-consuming, even with parallel processing. Please ensure
+that you keep the folder structure exactly as provided in the
+repository—including all folder names—since the code relies on these
+specific names to locate and save data. Changing or removing any folder
+may cause errors.</p>
 <p>Simulations are performed with the following steps.</p>
 <ol style="list-style-type: decimal">
-<li><p>Go to the R folder and run the file <code>simulate_data.R</code>.
-This will generate the data for the simulations and save it in the
-<code>simulations</code> folder.</p></li>
+<li><p>Navigate to the R folder and run the file
+<code>simulate_data.R</code>. This will generate the data for the
+simulations and save it in the <code>simulations</code> folder.</p></li>
 <li><p>Still in the R folder, run the files <code>fit_M1.R</code>,
-<code>fit_M2_q1.R</code>, <code>fit_M2_q3.R</code>. This will fit the
-different methods on the simulated data and save the results in the
-<code>simulations</code> folder.</p></li>
-<li><p>Go to the python folder and train the VAE. The specific steps are
-detailed in <code>python/README.md</code>.</p></li>
-<li><p>Go back to the R folder. Run the file
+<code>fit_M2.R</code>. This will fit the different methods on the
+simulated data and save the results in the <code>simulations</code>
+folder.</p></li>
+<li><p>Navigate to the python folder and train the VAE. The specific
+steps are detailed in <code>python/README.md</code>.</p></li>
+<li><p>Return to the R folder. Run the file
 <code>simulation_table_M1.R</code> to compute Table 1 and
 <code>simulation_table_M2.R</code> to compute Table 2.</p></li>
-<li><p>Create Figure 1 using the file <code>figure1.R</code>.</p></li>
+<li><p>Create Figure 1 using the file <code>Figure1.R</code>.</p></li>
 </ol>
-<p>You will need the following R packages to run the simulations:</p>
-<pre><code>purrr
-furrr
-tidyr
-dplyr
-ggplot2
-gtools
-cvTools</code></pre>
 </div>
 <div id="simulationstudy_supplementary" class="section level3">
 <h3>simulationStudy_Supplementary</h3>
 <p>The main.R file contains the code to conduct the additional
-simulations in Section F of the Supplementary Materials. You will need
-the following R packages to run the simulations:</p>
-<pre><code>RGAN
-torch
-transport
-MonteCarlo
-parallel
-future
-reshape
-ggplot2
-sql
-Rfast
-patchwork</code></pre>
+simulations presented in Section F of the Supplementary Materials.</p>
+</div>
+</div>
+<div id="reproducibility" class="section level2">
+<h2>Reproducibility</h2>
+<div id="supporting-software-requirements" class="section level3">
+<h3>Supporting software requirements</h3>
+<p>Version of primary software used: R version 4.1.3 or superior. Python
+version 3.10 or superior. We list below the packages and dependencies
+used for each folder.</p>
+<div id="data_analysis-1" class="section level4">
+<h4>data_analysis</h4>
+<pre><code>dplyr (1.1.4) 
+tidyverse (2.0.0) 
+purrr (1.0.2)
+furrr (0.3.1) 
+ggplot2 (3.5.1) 
+patchwork (1.3.0) 
+irlba (2.3.5.1) 
+e1071 (1.7.16) 
+cowplot (1.1.3) 
+gridGraphics (0.5.1) 
+gtools (3.9.5) 
+cvTools (0.3.3) 
+Rfast (2.1.0) </code></pre>
+</div>
+<div id="simulationstudy-1" class="section level4">
+<h4>SimulationStudy</h4>
+<p>R packages:</p>
+<pre><code>dplyr (1.1.4) 
+tidyverse (2.0.0) 
+purrr (1.0.2)
+furrr (0.3.1) 
+gtools (3.9.5) 
+cvTools (0.3.3) 
+irlba (2.3.5.1) 
+Matrix (1.4.0)
+Rfast (2.1.0)
+stargazer (5.2.3)
+gridExtra (2.3)
+RColorBrewer (1.1.3)</code></pre>
+<p>Python libraries:</p>
+<pre><code>python=3.10
+numpy=1.26.4
+pandas=2.2.3
+matplotlib=3.9.1
+seaborn=0.13.2
+scipy=1.15.2
+scikit-learn=1.6.1
+jupyter
+requests=2.32.3
+tensorflow=2.12.1
+keras=2.12.0
+tensorflow-probability=0.20.0
+pip</code></pre>
+</div>
+<div id="simulationstudy_supplementary-1" class="section level4">
+<h4>SimulationStudy_Supplementary</h4>
+<pre><code>sql (1.0)
+future (1.40.0)
+ggplot2 (3.5.1) 
+Rfast (2.1.0) 
+patchwork (1.3.0)
+RGAN (0.1.1) 
+torch (0.13.0) 
+transport (0.15.4) 
+MonteCarlo (1.0.6) 
+parallel (4.1.2) 
+reshape (0.8.9) </code></pre>
+<p>To install the sql package, please run:</p>
+<pre><code>devtools::install_github(&quot;jbodelet/SQL/sql@v1.0&quot;)</code></pre>
+</div>
 </div>
 </div>
 </div>
