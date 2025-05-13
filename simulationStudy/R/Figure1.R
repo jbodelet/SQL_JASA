@@ -1,11 +1,22 @@
-# Reproduce Figure 1 in the manuscript (Functional Boxplots for Model M1)
-# -----------------------------------------------------
+#------------------------------------------------------------
+# Script: Figure1.R
+# Purpose: Reproduce Figure 1 in the manuscript (Functional Boxplots for Model M1)
+# Usage:
+#   It is best practice to open the repository as an Rstudio project (open SQL_JASA.Rproj in top-level directory).
+#   Alternatively, set the working directory as the top-level directory and make sure that here package works automatically.
+# Running time: < 1 min
+#------------------------------------------------------------
+
+# Load required packages (see Reproducibility section in README).
 library(tidyverse)
 library(gridExtra)
 library(RColorBrewer)
 library(here)
+
+# Load functions:
 source( here( "simulationStudy", "R", "src", "functional_boxplots.R") )
 
+# Path to simulations:
 PATH_TO_SIM = here( "simulationStudy", "simulations", "M1", "data_n100_var1/")
 
 
@@ -26,7 +37,6 @@ colors = c(brewer.pal(8, "Set1")[c(1,2)], "black")
 
 
 # Plot Functional Clustering Results
-#====================================
 ggplot(mapping=aes(x=z)) +
   # Plot VAE
   geom_ribbon(aes(ymin=limit_lo, ymax=limit_up, fill="VAE"), alpha=.1, data=data_VAE) +

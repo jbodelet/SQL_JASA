@@ -1,13 +1,20 @@
-# Data Analysis Script for Statistical Quantile Learning Paper
-# ---------------------------------------------------------
-# The script `cancer_rna.R` reproduces all the analyses and figures for the Cancer RNA-Seq data as described in Section 5 of the manuscript 
-# and Section E in the Supplementary Materials.
-# It handles data download, preprocessing, model estimation, plotting the latent space, computing explained variance,
-# classification accuracy, and functional clustering of genes.
-# 
+#------------------------------------------------------------
+# Script: cancer_rna.R
+# Purpose: Master script  for reproducing all the data analysis in Section 5 of the manuscript and Section E in the Supplementary Materials
 # Usage:
-# Open the project root as an RStudio project (ensures here() works automatically).
-# Install and load required packages (see Reproducibility section in README).
+#   This file contains instructions for reproducing all the results for the data analysis, including numbers and figures contained in the paper. 
+#   It handles data download, preprocessing, model estimation, plotting the latent space, computing explained variance,
+#   classification accuracy, and functional clustering of genes.
+#   It is best practice to open the repository as an Rstudio project (open SQL_JASA.Rproj in top-level directory).
+#   Alternatively, set the working directory as the top-level directory and make sure that here package works automatically.
+# Running time:
+#   Fitting the SQL method with pre-selected lambda takes approximatively 4 minutes runtime.
+#   Running the cross-validation is computationally intensive and takes about an hour.
+#   Obtaining the explained variances takes about 3 hours.
+#------------------------------------------------------------
+
+
+# Load required packages (see Reproducibility section in README).
 library(dplyr)
 library(tidyverse)
 library(purrr)
@@ -21,14 +28,16 @@ library(gridGraphics)
 library(cvTools)
 library(gtools)
 library(here)
+
+# Load functions necessary for the data analysis:
 source(here("data_analysis", "src", "estimation.R"))
 source(here("data_analysis", "src", "dataAnalysis.R"))
 
 
 
-#==================================
-# 1) Load  and Load RNA-Seq Data
-#==================================
+#====================================================
+# 1) Download, unzip, and prepare the RNA-Seq Data
+#====================================================
 
 # download data the PanCanAtlas RNA-Seq dataset (801 samples x ~20k genes)
 dataset_url <- "https://archive.ics.uci.edu/static/public/401/gene+expression+cancer+rna+seq.zip"
@@ -45,12 +54,14 @@ folder <- here( "data_analysis", "TCGA-PANCAN-HiSeq-801x20531/")
 raw <- read.csv2(file = paste0(folder, "data.csv" ), sep = ",")
 raw$gene_0 <- NULL
 
-# Convert expression values to numeric, center and scale each gene
+# Convert expression values to numeric
 gdata <- apply(raw[, -1], 2, as.numeric )
-gdata <- scale( gdata )  # rescale data
 
-# Remove genes (columns) with any missing values
-gdata <- gdata[, complete.cases( t(gdata) ) ]  # remove genes with missing values
+# Rescale data
+gdata <- scale( gdata )  
+
+# Remove genes (columns) with missing values
+gdata <- gdata[, complete.cases( t(gdata) ) ]
 
 # Load phenotype (tumor type) labels and convert to factor
 pheno <- read.csv2(file = paste0(folder, "labels.csv" ), sep = ",")
@@ -90,6 +101,7 @@ fit <- AFM( gdata, q = 2, K = 12, lambda = lambda, method = "Greedy", Niter = 20
 #============================================
 # 3) Reproduce Figure 3 (Latent space)
 #============================================
+# Approximate run time: < 1min
 
 # Compute PCA with 2 principal component vectors:
 pca <- irlba::prcomp_irlba(gdata, n= 2)
@@ -132,7 +144,7 @@ ggsave(here("data_analysis", "latent_space.png"), plot = final_plot, width = 8, 
 #=========================================================
 # 4) Compute and Plot Explained Variance for SQL and PCA
 #=========================================================
-
+# Approximate run time (without parallelization): 3 hours
 qvec <- 1:20
 
 # For each number of factors, estimate SQL and save results
@@ -182,7 +194,7 @@ data.frame(Factor = 1:20, sql = ev, pca = ev_pca )  %>%
 #================================================
 # 5) Classification Accuracy for SQL vs. PCA:
 #================================================
-
+# Approximate run time: < 1min
 
 # use fit obtained in step 2
 factor_z <- fit$factor_z
@@ -212,6 +224,7 @@ summary(accuracy_pca); sd(accuracy_pca)
 # Reproducing Figure 1 in Supplementary Materials requires performing the four step below (three with R and one with Python)
 # It requires as input the clustered functions (clusteredFunctions_10.json) 
 # and the obtained latent space (cancerDataResults.csv)
+# Approximate run time: < 1min
 
 source(here("data_analysis", "src", "functional_clustering.R"))
 

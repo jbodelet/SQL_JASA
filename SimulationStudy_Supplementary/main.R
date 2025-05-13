@@ -1,9 +1,17 @@
-# Supplementary Simulation Study: SQL vs. GAN Comparison
-# -----------------------------------------------------
-# This script performs Monte Carlo simulations to compare SQL and GAN
-# estimators on synthetic data, and produces boxplot summaries of
-# Wasserstein and Kolmogorov metrics for sample sizes n=200 and n=2000.
+#------------------------------------------------------------
+# Script: main.R
+# Purpose: 
+#   Supplementary Simulation Study: SQL vs. GAN Comparison
+#   This script performs Monte Carlo simulations to compare SQL and GAN
+#   estimators on synthetic data, and produces boxplot summaries of
+#   Wasserstein and Kolmogorov metrics for sample sizes n=200 and n=2000.
+# Usage:
+#   It is best practice to open the repository as an Rstudio project (open SQL_JASA.Rproj in top-level directory).
+#   Alternatively, set the working directory as the top-level directory and make sure that here package works automatically.
+# Running time without parallelization: 6 hours
+#------------------------------------------------------------
 
+# Load required packages (see Reproducibility section in README).
 devtools::install_github("jbodelet/SQL/sql@v1.0") # install version 1.0 to ensure reproducibility
 library(sql)
 library(RGAN)
@@ -17,6 +25,8 @@ library(ggplot2)
 library(Rfast)
 library(patchwork)
 library(here)
+
+# Load functions:
 source( here("SimulationStudy_Supplementary", "src", "architectures.R") )
 source( here("SimulationStudy_Supplementary", "src", "gan_training.R") )
 source( here("SimulationStudy_Supplementary", "src", "simulations.R") )

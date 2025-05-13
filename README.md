@@ -39,8 +39,7 @@ The script `cancer_rna.R` reproduces all the analyses and figures for the Cancer
 and Section E in the Supplementary Materials.
 It handles data download, preprocessing, model estimation, plotting the latent space, computing explained variance,
 classification accuracy, and functional clustering of genes.
-For this data set, running time for the SQL method was about 4 minutes.
-The cross-validation takes about an hour on most machines (without parallelization).
+
 
 
 ### simulationStudy
@@ -82,8 +81,37 @@ The `main.R` file contains the code to conduct the additional simulations presen
 
 ### Supporting software requirements
 
+All the R analyses were run using the following environment:
+- Platform: x86_64-pc-linux-gnu
+- Operating System: Ubuntu 22.04.5 LTS
+- R version: 4.4.3 (2025-02-28)
+- Python version: 3.12.7
+
 Version of primary software used: R version 4.1.3 or superior. Python version 3.10 or superior.
 We list below the packages and dependencies used for each folder.
+
+
+### Running time
+
+We indicate the estimated running time (without parallelization) for the following machine:
+
+#### data_analysis
+- Data analysis: 4 minutes
+- Cross-validation: 1 hour
+- Explained variance: 2 hours
+- Rest of the code: < 1min
+
+#### SimulationStudy
+
+- Simulating data: 10 minutes.
+- Running SQL (R code): 5 hours
+- Running VAE (Python code): 30 hours
+- Rest of the code: < 1min
+
+#### SimulationStudy_Supplementary
+
+- All simulations: 6 hours
+
 
 #### data_analysis
 ```

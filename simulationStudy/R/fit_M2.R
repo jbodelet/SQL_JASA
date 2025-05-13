@@ -1,13 +1,21 @@
-# Simulation Study: Model 2 Fitting Script
-# ----------------------------------------
-# This script runs Monte Carlo simulations to fit SQL for Model 1 across multiple sample sizes and repetitions.
-# Results are saved in the `simulationStudy/simulations/` directory for later analysis.
+#------------------------------------------------------------
+# Script: fit_M2.R
+# Purpose: This script runs Monte Carlo simulations to fit SQL for Model 2 across multiple sample sizes and repetitions.
+# Usage:
+#   Results are saved in the `simulationStudy/simulations/` directory for later analysis.
+#   It is best practice to open the repository as an Rstudio project (open SQL_JASA.Rproj in top-level directory).
+#   Alternatively, set the working directory as the top-level directory and make sure that here package works automatically.
+# Running time without parallelization: 3 hours
+#------------------------------------------------------------
 
+# Load required packages (see Reproducibility section in README).
 library(purrr)
 library(furrr)
 library(tidyr)
 library(dplyr)
 library(here)
+
+# Load functions:
 source( here( "simulationStudy", "R", "src", "AFM.R") )
 source( here( "simulationStudy", "R", "src", "montecarlo_M2.R") )
 source( here( "simulationStudy", "R", "src", "crossValidation.R") )

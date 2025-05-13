@@ -4,6 +4,10 @@ data_analysis/TCGA-PANCAN-HiSeq-801x20531/
 data_analysis/gene_expression_data/
 data_analysis/gene_expression_cancer_rna_seq.zip
 data_analysis/output/*
+data_analysis/cancerDataResults.csv
+data_analysis/clusteredFunctions_10.json
+data_analysis/latent_space.png
 !data_analysis/output/.gitkeep
+.Rhistory
 
 .Rproj.user

@@ -1,13 +1,22 @@
-# Generate Table 1 (Model 1) in the manuscript
-# ---------------------------------------------------
-# This script aggregates Monte Carlo simulation results for Model 1,
-# computes median and standard deviation of MSE metrics, and
-# outputs a summary table (both printed and LaTeX via stargazer).
+#------------------------------------------------------------
+# Script: simulation_table_M1.R
+# Purpose: This script generates Table 1 (Model 1) in the manuscript
+# Usage:
+#   This script aggregates Monte Carlo simulation results for Model 1,
+#   computes median and standard deviation of MSE metrics, and
+#   outputs a summary table (both printed and LaTeX via stargazer)
+#   It is best practice to open the repository as an Rstudio project (open SQL_JASA.Rproj in top-level directory).
+#   Alternatively, set the working directory as the top-level directory and make sure that here package works automatically.
+# Running time: < 1 min
+#------------------------------------------------------------
 
+# Load required packages (see Reproducibility section in README).
 library(purrr)
 library(tidyr)
 library(dplyr)
 library(here)
+
+# Load functions:
 source( here( "simulationStudy", "R", "src", "montecarlo_M1.R") )
 
 
