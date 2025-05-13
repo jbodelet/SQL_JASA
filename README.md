@@ -87,13 +87,18 @@ All the R analyses were run using the following environment:
 - R version: 4.4.3 (2025-02-28)
 - Python version: 3.12.7
 
-Version of primary software used: R version 4.1.3 or superior. Python version 3.10 or superior.
-We list below the packages and dependencies used for each folder.
+
+
 
 
 ### Running time
 
 We indicate the estimated running time (without parallelization) for the following machine:
+```
+R version 4.3.3 (2024-02-29)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Ubuntu 24.04.2 LTS
+```
 
 #### data_analysis
 - Data analysis: 4 minutes
@@ -105,13 +110,17 @@ We indicate the estimated running time (without parallelization) for the followi
 
 - Simulating data: 10 minutes.
 - Running SQL (R code): 5 hours
-- Running VAE (Python code): 30 hours
+- Running VAE (Python code): 50 hours
 - Rest of the code: < 1min
 
 #### SimulationStudy_Supplementary
 
-- All simulations: 6 hours
+- All simulations: 50 hours
 
+
+### Dependencies
+
+We list below the packages and dependencies used for each folder.
 
 #### data_analysis
 ```
